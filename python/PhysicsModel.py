@@ -131,7 +131,11 @@ def getHiggsProdDecMode(bin,process,options):
     processSource = process
     decaySource   = options.fileName+":"+bin # by default, decay comes from the datacard name or bin label
     if "_" in process: 
-        (processSource, decaySource) = process.split("_")
+        #(processSource, decaySource) = process.split("_")
+        if process.count('_')==1: (processSource, decaySource) = process.split("_")
+        elif process.count('_')==2: 
+          processSource = process.split("_")[0]
+          decaySource   = process.split("_")[2]
         if decaySource not in ALL_HIGGS_DECAYS:
             print "ERROR", "Validation Error: signal process %s has a postfix %s which is not one recognized higgs decay modes (%s)" % (process,decaySource,ALL_HIGGS_DECAYS)
             #raise RuntimeError, "Validation Error: signal process %s has a postfix %s which is not one recognized higgs decay modes (%s)" % (process,decaySource,ALL_HIGGS_DECAYS)
