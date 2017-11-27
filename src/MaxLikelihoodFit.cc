@@ -55,6 +55,7 @@ bool        MaxLikelihoodFit::skipBOnlyFit_ = false;
 bool        MaxLikelihoodFit::noErrors_ = false;
 bool        MaxLikelihoodFit::reuseParams_ = false;
 bool        MaxLikelihoodFit::customStartingPoint_ = false;
+float       MaxLikelihoodFit::muTrue_ = 0.0;
 
 
 MaxLikelihoodFit::MaxLikelihoodFit() :
@@ -85,6 +86,7 @@ MaxLikelihoodFit::MaxLikelihoodFit() :
         ("noErrors",  "Don't compute uncertainties on the best fit value")
         ("initFromBonly",  "Use the values of the nuisance parameters from the background only fit as the starting point for the s+b fit")
         ("customStartingPoint",  "Don't set the signal model parameters to zero before the fit")
+        ("muTrue",        boost::program_options::value<float>(&muTrue_)->default_value(muTrue_), "Set value of mu for bonly fit (default zero)")
    ;
 
     // setup a few defaults
@@ -201,7 +203,8 @@ bool MaxLikelihoodFit::runSpecific(RooWorkspace *w, RooStats::ModelConfig *mc_s,
   const RooCmdArg &constCmdArg_s = withSystematics  ? RooFit::Constrain(*mc_s->GetNuisanceParameters()) : RooFit::NumCPU(1); // use something dummy 
   //const RooCmdArg &minosCmdArg = minos_ == "poi" ?  RooFit::Minos(*mc_s->GetParametersOfInterest())   : RooFit::Minos(minos_ != "none");  //--> dont use fitTo!
   w->loadSnapshot("clean");
-  if (!customStartingPoint_) r->setVal(0.0); 
+  //if (!customStartingPoint_) r->setVal(0.0); 
+  if (!customStartingPoint_) r->setVal(muTrue_); 
   r->setConstant(true);
 
   // Setup Nll before calling fits;
